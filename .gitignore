@@ -1,0 +1,67 @@
+# Shout out to chatGPT for generating this
+# Ignore build and output directories
+bin/
+obj/
+out/
+
+# Ignore user-specific Visual Studio files
+.vscode/
+*.user
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.ide
+*.swp
+
+# Ignore Rider/JetBrains IDE settings
+.idea/
+*.iml
+
+# Ignore ASP.NET temp files
+App_Data/
+App_Temp/
+
+# Ignore SQLite database files
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# Ignore Entity Framework migrations snapshot files (optional)
+Migrations/
+
+# Ignore compiled DLLs and logs
+*.dll
+*.pdb
+*.log
+*.cache
+
+# Ignore package dependencies
+node_modules/
+bower_components/
+packages/
+
+# Ignore environment-specific files
+.env
+.env.local
+secrets.json
+
+# Ignore deployment files
+publish/
+*.publishsettings
+
+# Ignore Resharper files
+*.DotSettings.user
+
+# Ignore NuGet files
+project.lock.json
+.nuget/
+
+# Ignore Rider's workspace settings (but keep essential project configs)
+.idea/workspace.xml
+.idea/inspectionProfiles/
+
+# Ignore Thumbs.db and other OS-generated files
+Thumbs.db
+.DS_Store
