@@ -2,8 +2,6 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Drawsome.Models;
 using Drawsome.Data;
-using System.Linq;
-using BCrypt.Net;
 
 namespace Drawsome.Controllers;
 
@@ -31,18 +29,6 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult Register(string username, string password)
     {
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-        {
-            ModelState.AddModelError("", "Username and password are required.");
-            return View();
-        }
-
-        if (_context.Users.Any(u => u.Username == username))
-        {
-            ModelState.AddModelError("", "Username already exists.");
-            return View();
-        }
-        
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
         var newUser = new User
@@ -57,6 +43,32 @@ public class HomeController : Controller
         _context.SaveChanges();
 
         return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public IActionResult Login(string username, string password)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Username == username);
+
+        if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
+        {
+            HttpContext.Session.SetString("Username", user.Username);
+            return RedirectToAction("Lobby");
+        }
+        else
+        {
+            ModelState.AddModelError("", "Invalid username or password.");
+            return View("Index");
+        }
+    }
+
+    public IActionResult Lobby()
+    {
+        if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+        {
+            return RedirectToAction("Index");
+        }
+        return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

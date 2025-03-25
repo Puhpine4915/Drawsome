@@ -3,7 +3,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="eng">
+<html lang="en">
 <head>
     <title>Login</title>
     <link rel="stylesheet" href="~/css/style.css" />
@@ -12,11 +12,17 @@
 <img src="~/images/DrawsomeLogo.png" alt="Drawsome Logo" class="centered-logo"/>
 <div class="login-container">
     <h2>Login</h2>
-    <form>
-        <input type="text" placeholder="Username" />
-        <input type="password" placeholder="Password" />
+    <form method="post" asp-action="Login">
+        <input type="text" name="username" placeholder="Username" />
+        <input type="password" name="password" placeholder="Password" />
         <button type="submit">Login</button>
     </form>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div style="color: red;">
+            @Html.ValidationSummary(false)
+        </div>
+    }
     <p>
         No account? <a href="/Home/Register">Make one!</a>
     </p>
