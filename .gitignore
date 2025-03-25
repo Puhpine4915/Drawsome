@@ -22,8 +22,8 @@ App_Data/
 App_Temp/
 
 # Ignore SQLite database files
-*.sqlite
-*.sqlite3
+*.sqlite*
+*.sqlite3*
 *.db
 *.db-shm
 *.db-wal
