@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "G1nGr0OlYASngUNcHE3IQl8wRvXVziiEne87A1cUt2A/msxDU6NwGoZ3sSqnbb1DkoBF2gq4JIbTyxKQLclTxg==",
+  "dgSpecHash": "tUhQDAdO1vQ=",
   "success": true,
   "projectFilePath": "/home/puhpine/RiderProjects/Drawsome/Drawsome/Drawsome.csproj",
   "expectedPackageFiles": [
+    "/home/puhpine/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/home/puhpine/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/home/puhpine/.nuget/packages/microsoft.bcl.asyncinterfaces/6.0.0/microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "/home/puhpine/.nuget/packages/microsoft.codeanalysis.analyzers/3.3.3/microsoft.codeanalysis.analyzers.3.3.3.nupkg.sha512",
