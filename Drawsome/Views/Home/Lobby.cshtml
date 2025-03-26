@@ -67,6 +67,7 @@
             errorMessage.textContent = `Error: Lobby "${lobbyName}" already exists!`;
             errorMessage.style.color = "red";
             errorMessage.style.display = "block";
+            document.getElementById("lobbyDetails").style.display = "none";
         });
     }
 
@@ -76,13 +77,19 @@
         if (connection) {
             const lobbyName = document.getElementById("createLobbyName").value;
             const username = "@Context.Session.GetString("Username")";
-            connection.invoke("CreateLobby", lobbyName, username).catch(err => console.error(err.toString()));
-            document.getElementById("lobbyDetails").style.display = "block";
-            document.getElementById("lobbyName").textContent = "Lobby: " + lobbyName;
+            connection.invoke("CreateLobby", lobbyName, username)
+                .then((result) => {
+                    if (result) {
+                        document.getElementById("lobbyDetails").style.display = "block";
+                        document.getElementById("lobbyName").textContent = "Lobby: " + lobbyName;
+                    }
+                })
+                .catch(err => console.error(err.toString()));
         } else {
             console.error("SignalR connection not established.");
         }
     }
+
 
     function joinLobby() {
         if (connection) {

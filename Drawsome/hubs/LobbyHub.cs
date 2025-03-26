@@ -8,15 +8,17 @@ namespace Drawsome.Hubs
     {
         private static readonly ConcurrentDictionary<string, Lobby> Lobbies = new ConcurrentDictionary<string, Lobby>();
 
-        public async Task CreateLobby(string lobbyName, string username)
+        public async Task<bool> CreateLobby(string lobbyName, string username)
         {
             if (Lobbies.TryAdd(lobbyName, new Lobby { LobbyName = lobbyName, Creator = username }))
             {
                 await JoinLobby(lobbyName, username);
+                return true;
             }
             else
             {
                 await Clients.Caller.SendAsync("LobbyCreationFailed", lobbyName);
+                return false;
             }
         }
 
