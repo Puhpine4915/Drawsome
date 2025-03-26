@@ -22,7 +22,7 @@ namespace Drawsome.Hubs
             }
         }
 
-        public async Task JoinLobby(string lobbyName, string username)
+        public async Task<bool> JoinLobby(string lobbyName, string username)
         {
             if (Lobbies.TryGetValue(lobbyName, out Lobby lobby))
             {
@@ -32,10 +32,12 @@ namespace Drawsome.Hubs
                 }
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyName);
                 await Clients.Group(lobbyName).SendAsync("UpdatePlayers", lobby.Players);
+                return true;
             }
             else
             {
                 await Clients.Caller.SendAsync("LobbyNotFound", lobbyName);
+                return false;
             }
         }
 

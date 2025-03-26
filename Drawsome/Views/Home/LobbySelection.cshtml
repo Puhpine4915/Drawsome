@@ -78,8 +78,10 @@
                 const lobbyName = document.getElementById("joinLobbyName").value;
                 const username = "@Context.Session.GetString("Username")";
                 connection.invoke("JoinLobby", lobbyName, username)
-                    .then(() => {
-                        window.location.href = `/Home/ActiveLobby?lobbyName=${lobbyName}`;
+                    .then((result) => {
+                        if (result){
+                            window.location.href = `/Home/ActiveLobby?lobbyName=${lobbyName}`;
+                        }
                     })
                     .catch(err => console.error(err.toString()));
             } else {
