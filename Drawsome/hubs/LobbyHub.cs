@@ -14,6 +14,10 @@ namespace Drawsome.Hubs
             {
                 await JoinLobby(lobbyName, username);
             }
+            else
+            {
+                await Clients.Caller.SendAsync("LobbyCreationFailed", lobbyName);
+            }
         }
 
         public async Task JoinLobby(string lobbyName, string username)

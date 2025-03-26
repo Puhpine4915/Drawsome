@@ -61,6 +61,13 @@
             errorMessage.style.display = "block";
             document.getElementById("lobbyDetails").style.display = "none";
         });
+
+        connection.on("LobbyCreationFailed", (lobbyName) => {
+            const errorMessage = document.getElementById("errorMessage");
+            errorMessage.textContent = `Error: Lobby "${lobbyName}" already exists!`;
+            errorMessage.style.color = "red";
+            errorMessage.style.display = "block";
+        });
     }
 
     startConnection();
