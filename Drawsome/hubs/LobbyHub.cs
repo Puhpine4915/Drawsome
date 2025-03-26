@@ -26,7 +26,10 @@ namespace Drawsome.Hubs
         {
             if (Lobbies.TryGetValue(lobbyName, out Lobby lobby))
             {
-                lobby.Players.Add(username);
+                if (!lobby.Players.Any(p => p == username))
+                {
+                    lobby.Players.Add(username);
+                }
                 await Groups.AddToGroupAsync(Context.ConnectionId, lobbyName);
                 await Clients.Group(lobbyName).SendAsync("UpdatePlayers", lobby.Players);
             }

@@ -7,12 +7,10 @@ namespace Drawsome.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
     private readonly ApplicationDbContext _context;
 
     public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
     {
-        _logger = logger;
         _context = context;
     }
 
@@ -53,7 +51,7 @@ public class HomeController : Controller
         if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
         {
             HttpContext.Session.SetString("Username", user.Username);
-            return RedirectToAction("Lobby");
+            return RedirectToAction("LobbySelection");
         }
         else
         {
@@ -62,12 +60,28 @@ public class HomeController : Controller
         }
     }
 
-    public IActionResult Lobby()
+    public IActionResult LobbySelection()
     {
         if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
         {
             return RedirectToAction("Index");
         }
+        return View();
+    }
+
+    public IActionResult ActiveLobby(string lobbyName)
+    {
+        if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+        {
+            return RedirectToAction("Index");
+        }
+
+        if (string.IsNullOrEmpty(lobbyName))
+        {
+            return RedirectToAction("LobbySelection");
+        }
+
+        ViewBag.LobbyName = lobbyName;
         return View();
     }
 

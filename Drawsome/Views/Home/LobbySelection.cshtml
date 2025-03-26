@@ -1,0 +1,90 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Lobby Selection</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+    <script src="~/js/signalR.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Welcome to Drawsome!</h2>
+        <p>You're logged in as @Context.Session.GetString("Username")!</p>
+        <div id="errorMessage" style="display: none;"></div>
+        <div>
+            <input type="text" id="createLobbyName" placeholder="Lobby Name" />
+            <button onclick="createLobby()">Create Lobby</button>
+        </div>
+        <div>
+            <input type="text" id="joinLobbyName" placeholder="Lobby Name" />
+            <button onclick="joinLobby()">Join Lobby</button>
+        </div>
+    </div>
+
+    <script>
+        let connection;
+
+        const startConnection = async () => {
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl("/lobbyHub")
+                .build();
+
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.error(err.toString());
+            }
+
+            connection.on("LobbyNotFound", (lobbyName) => {
+                const errorMessage = document.getElementById("errorMessage");
+                errorMessage.textContent = `Error: Lobby "${lobbyName}" not found!`;
+                errorMessage.style.color = "red";
+                errorMessage.style.display = "block";
+            });
+
+            connection.on("LobbyCreationFailed", (lobbyName) => {
+                const errorMessage = document.getElementById("errorMessage");
+                errorMessage.textContent = `Error: Lobby "${lobbyName}" already exists!`;
+                errorMessage.style.color = "red";
+                errorMessage.style.display = "block";
+            });
+        }
+
+        startConnection();
+
+        function createLobby() {
+            if (connection) {
+                const lobbyName = document.getElementById("createLobbyName").value;
+                const username = "@Context.Session.GetString("Username")";
+                connection.invoke("CreateLobby", lobbyName, username)
+                    .then((result) => {
+                        if (result) {
+                            window.location.href = `/Home/ActiveLobby?lobbyName=${lobbyName}`;
+                        }
+                    })
+                    .catch(err => console.error(err.toString()));
+            } else {
+                console.error("SignalR connection not established.");
+            }
+        }
+
+        function joinLobby() {
+            if (connection) {
+                const lobbyName = document.getElementById("joinLobbyName").value;
+                const username = "@Context.Session.GetString("Username")";
+                connection.invoke("JoinLobby", lobbyName, username)
+                    .then(() => {
+                        window.location.href = `/Home/ActiveLobby?lobbyName=${lobbyName}`;
+                    })
+                    .catch(err => console.error(err.toString()));
+            } else {
+                console.error("SignalR connection not established.");
+            }
+        }
+    </script>
+</body>
+</html>
