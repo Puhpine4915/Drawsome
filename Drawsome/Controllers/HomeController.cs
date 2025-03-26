@@ -5,15 +5,8 @@ using Drawsome.Data;
 
 namespace Drawsome.Controllers;
 
-public class HomeController : Controller
+public class HomeController(ApplicationDbContext context) : Controller
 {
-    private readonly ApplicationDbContext _context;
-
-    public HomeController(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public IActionResult Index()
     {
         return View();
@@ -37,8 +30,8 @@ public class HomeController : Controller
             IsAdmin = false
         };
 
-        _context.Users.Add(newUser);
-        _context.SaveChanges();
+        context.Users.Add(newUser);
+        context.SaveChanges();
 
         return RedirectToAction("Index");
     }
@@ -46,7 +39,7 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult Login(string username, string password)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Username == username);
+        var user = context.Users.FirstOrDefault(u => u.Username == username);
 
         if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
         {
