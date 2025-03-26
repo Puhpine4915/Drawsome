@@ -1,5 +1,6 @@
 using Drawsome.Data;
 using Microsoft.EntityFrameworkCore;
+using Drawsome.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSession();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -31,4 +33,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapHub<LobbyHub>("/lobbyHub");
 app.Run();
