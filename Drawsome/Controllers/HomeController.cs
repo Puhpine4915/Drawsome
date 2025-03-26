@@ -9,7 +9,7 @@ public class HomeController : Controller
 {
     private readonly ApplicationDbContext _context;
 
-    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+    public HomeController(ApplicationDbContext context)
     {
         _context = context;
     }

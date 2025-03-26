@@ -10,7 +10,7 @@ namespace Drawsome.Hubs
 
         public async Task<bool> CreateLobby(string lobbyName, string username)
         {
-            if (Lobbies.TryAdd(lobbyName, new Lobby { LobbyName = lobbyName, Creator = username }))
+            if (Lobbies.TryAdd(lobbyName, new Lobby { LobbyName = lobbyName}))
             {
                 await JoinLobby(lobbyName, username);
                 return true;
@@ -26,7 +26,7 @@ namespace Drawsome.Hubs
         {
             if (Lobbies.TryGetValue(lobbyName, out Lobby lobby))
             {
-                if (!lobby.Players.Any(p => p == username))
+                if (lobby.Players.All(p => p != username))
                 {
                     lobby.Players.Add(username);
                 }
@@ -47,7 +47,7 @@ namespace Drawsome.Hubs
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyName);
                 await Clients.Group(lobbyName).SendAsync("UpdatePlayers", lobby.Players);
 
-                if (lobby.Players.Count == 0 && lobby.Creator == username)
+                if (lobby.Players.Count == 0)
                 {
                     Lobbies.TryRemove(lobbyName, out _);
                 }
