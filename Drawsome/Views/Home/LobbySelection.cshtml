@@ -10,21 +10,22 @@
     <script src="~/js/signalR.js"></script>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Welcome to Drawsome!</h2>
-        <p>You're logged in as @Context.Session.GetString("Username")!</p>
-        <div id="errorMessage" style="display: none;"></div>
-        <div>
-            <input type="text" id="createLobbyName" placeholder="Lobby Name" />
-            <button onclick="createLobby()">Create Lobby</button>
-        </div>
-        <div>
-            <input type="text" id="joinLobbyName" placeholder="Lobby Name" />
-            <button onclick="joinLobby()">Join Lobby</button>
-        </div>
+<img src="~/images/DrawsomeLogo.png" alt="Drawsome Logo" class="centered-logo" />
+<div class="login-container">
+    <p>Logged in as @Context.Session.GetString("Username")</p>
+    <div id="errorMessage" style="display: none;"></div>
+    <div>
+        <input type="text" id="createLobbyName" placeholder="Lobby Name"/>
+        <button onclick="createLobby()">Create Lobby</button>
     </div>
+    <br>
+    <div>
+        <input type="text" id="joinLobbyName" placeholder="Lobby Name"/>
+        <button onclick="joinLobby()">Join Lobby</button>
+    </div>
+</div>
 
-    <script>
+<script>
         let connection;
 
         const startConnection = async () => {

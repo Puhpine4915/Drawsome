@@ -6,7 +6,7 @@ namespace Drawsome.Hubs
 {
     public class LobbyHub : Hub
     {
-        private static readonly ConcurrentDictionary<string, Lobby> Lobbies = new ConcurrentDictionary<string, Lobby>();
+        private static readonly ConcurrentDictionary<string, Lobby> Lobbies = new();
 
         public async Task<bool> CreateLobby(string lobbyName, string username)
         {
