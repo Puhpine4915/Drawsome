@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Drawsome.Models;
 using Drawsome.Data;
+using Drawsome.Hubs;
 
 namespace Drawsome.Controllers;
 
@@ -70,6 +71,12 @@ public class HomeController(ApplicationDbContext context) : Controller
         }
 
         if (string.IsNullOrEmpty(lobbyName))
+        {
+            return RedirectToAction("LobbySelection");
+        }
+
+        // Check if the lobby exists in the Lobbies dictionary
+        if (!LobbyHub.Lobbies.ContainsKey(lobbyName))
         {
             return RedirectToAction("LobbySelection");
         }
