@@ -164,7 +164,7 @@ public class HomeController(ApplicationDbContext context) : Controller
 
         if (adminUser == null || !adminUser.IsAdmin)
         {
-            return RedirectToAction("LobbySelection"); // Only admins can access
+            return RedirectToAction("LobbySelection");
         }
 
         var userToDelete = context.Users.FirstOrDefault(u => u.Id == id);
@@ -175,6 +175,12 @@ public class HomeController(ApplicationDbContext context) : Controller
         }
 
         return RedirectToAction("ManageUsers");
+    }
+    
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Index");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
