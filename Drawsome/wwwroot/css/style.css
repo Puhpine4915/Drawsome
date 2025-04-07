@@ -50,6 +50,16 @@ body {
     width: 100%;
 }
 
+.styledButton {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1.5rem
+}
+
 .login-container button:hover {
     background-color: #0056b3;
 }

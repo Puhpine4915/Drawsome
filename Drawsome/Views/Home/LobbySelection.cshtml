@@ -1,5 +1,10 @@
+@using Drawsome.Data;
+@inject ApplicationDbContext context
 @{
     Layout = null;
+    var username = Context.Session.GetString("Username");
+    var user = context.Users.FirstOrDefault(u => u.Username == username);
+    var isAdmin = user?.IsAdmin ?? false;
 }
 
 <!DOCTYPE html>
@@ -23,6 +28,11 @@
         <input type="text" id="joinLobbyName" placeholder="Lobby Name"/>
         <button onclick="joinLobby()">Join Lobby</button>
     </div>
+    @if (isAdmin)
+    {
+        <br>
+        <button onclick="location.href='@Url.Action("ManageUsers", "Home")'">Manage Users</button>
+    }
 </div>
 
 <script>

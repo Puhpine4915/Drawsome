@@ -1,0 +1,37 @@
+@model Drawsome.Models.User
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit User</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+<h1>Edit User: @Model.Username</h1>
+<form method="post" action="@Url.Action("UpdateUser", "Home")">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" value="@Model.Username" />
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" />
+    </div>
+    <div>
+        <label for="score">Score:</label>
+        <input type="number" id="score" name="score" value="@Model.Score" />
+    </div>
+    <div>
+        <label for="isAdmin">Is Admin:</label>
+        <input type="checkbox" id="isAdmin" name="isAdmin" value="true" @(Model.IsAdmin ? "checked" : "") />
+        <input type="hidden" name="isAdmin" value="false" />
+    </div>
+    <button class="styledButton" type="submit">Save Changes</button>
+    <br>
+    <button class="styledButton" onclick="location.href='@Url.Action("ManageUsers", "Home")'">Back</button>
+</form>
+</body>
+</html>

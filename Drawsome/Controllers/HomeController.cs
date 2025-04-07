@@ -74,8 +74,7 @@ public class HomeController(ApplicationDbContext context) : Controller
         {
             return RedirectToAction("LobbySelection");
         }
-
-        // Check if the lobby exists in the Lobbies dictionary
+        
         if (!LobbyHub.Lobbies.ContainsKey(lobbyName))
         {
             return RedirectToAction("LobbySelection");
@@ -83,6 +82,99 @@ public class HomeController(ApplicationDbContext context) : Controller
 
         ViewBag.LobbyName = lobbyName;
         return View();
+    }
+    
+    public IActionResult ManageUsers()
+    {
+        if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+        {
+            return RedirectToAction("Index");
+        }
+
+        var username = HttpContext.Session.GetString("Username");
+        var user = context.Users.FirstOrDefault(u => u.Username == username);
+
+        if (user == null || !user.IsAdmin)
+        {
+            return RedirectToAction("LobbySelection");
+        }
+
+        var users = context.Users.ToList();
+        return View(users);
+    }
+
+    public IActionResult EditUser(int id)
+    {
+        if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+        {
+            return RedirectToAction("Index");
+        }
+
+        var username = HttpContext.Session.GetString("Username");
+        var user = context.Users.FirstOrDefault(u => u.Username == username);
+
+        if (user == null || !user.IsAdmin)
+        {
+            return RedirectToAction("LobbySelection");
+        }
+
+        var userToEdit = context.Users.FirstOrDefault(u => u.Id == id);
+        return View(userToEdit);
+    }
+
+    [HttpPost]
+    public IActionResult UpdateUser(int id, string username, string password, int score, bool isAdmin)
+    {
+        if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+        {
+            return RedirectToAction("Index");
+        }
+
+        var adminUser = context.Users.FirstOrDefault(u => u.Username == HttpContext.Session.GetString("Username"));
+
+        if (adminUser == null || !adminUser.IsAdmin)
+        {
+            return RedirectToAction("LobbySelection");
+        }
+
+        var userToUpdate = context.Users.FirstOrDefault(u => u.Id == id);
+        if (userToUpdate != null)
+        {
+            userToUpdate.Username = username;
+            if (!string.IsNullOrEmpty(password))
+            {
+                userToUpdate.Password = BCrypt.Net.BCrypt.HashPassword(password);
+            }
+            userToUpdate.Score = score;
+            userToUpdate.IsAdmin = isAdmin;
+            context.SaveChanges();
+        }
+
+        return RedirectToAction("ManageUsers");
+    }
+    
+    public IActionResult DeleteUser(int id)
+    {
+        if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
+        {
+            return RedirectToAction("Index");
+        }
+
+        var adminUser = context.Users.FirstOrDefault(u => u.Username == HttpContext.Session.GetString("Username"));
+
+        if (adminUser == null || !adminUser.IsAdmin)
+        {
+            return RedirectToAction("LobbySelection"); // Only admins can access
+        }
+
+        var userToDelete = context.Users.FirstOrDefault(u => u.Id == id);
+        if (userToDelete != null)
+        {
+            context.Users.Remove(userToDelete);
+            context.SaveChanges();
+        }
+
+        return RedirectToAction("ManageUsers");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
