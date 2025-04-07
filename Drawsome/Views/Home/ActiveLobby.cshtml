@@ -1,5 +1,8 @@
 @{
     Layout = null;
+    var username = Context.Session.GetString("Username");
+    var lobby = Drawsome.Hubs.LobbyHub.Lobbies.FirstOrDefault(l => l.Key == ViewBag.LobbyName).Value;
+    var isCreator = lobby?.Players.FirstOrDefault() == username; // Check if the current user is the first player (creator)
 }
 
 <!DOCTYPE html>
@@ -16,11 +19,27 @@
         <ul id="playerList"></ul>
         <button onclick="leaveLobby()">Leave Lobby</button>
     </div>
+    <div>
+        @if (isCreator)
+        {
+            <br>
+            <canvas id="drawingCanvas" width="400" height="300" style="border: 1px solid black;"></canvas>
+        }
+        else
+        {
+            <br>
+            <canvas id="viewCanvas" width="400" height="300" style="border: 1px solid black;"></canvas>
+        }
+    </div>
 
     <script>
         let connection;
         const lobbyName = "@ViewBag.LobbyName";
         const username = "@Context.Session.GetString("Username")";
+        const isCreator = @(isCreator ? "true" : "false");
+        let canvas, context;
+        let drawing = false;
+        let sendTimer;
 
         const startConnection = async () => {
             connection = new signalR.HubConnectionBuilder()
@@ -44,10 +63,78 @@
                 });
             });
 
+            connection.on("ReceiveDrawing", (drawingData) => {
+                if (!isCreator) {
+                    drawReceivedData(drawingData);
+                }
+            });
+
             connection.invoke("JoinLobby", lobbyName, username).catch(err => console.error(err.toString()));
+
+            if (isCreator) {
+                setupCreatorCanvas();
+            } else {
+                setupViewCanvas();
+            }
         }
 
         startConnection();
+
+        function setupCreatorCanvas() {
+            canvas = document.getElementById("drawingCanvas");
+            context = canvas.getContext("2d");
+
+            canvas.addEventListener("mousedown", startDrawing);
+            canvas.addEventListener("mouseup", stopDrawing);
+            canvas.addEventListener("mousemove", draw);
+        }
+
+        function setupViewCanvas() {
+            canvas = document.getElementById("viewCanvas");
+            context = canvas.getContext("2d");
+        }
+
+        function startDrawing(e) {
+            drawing = true;
+            draw(e);
+        }
+
+        function stopDrawing() {
+            drawing = false;
+            context.beginPath();
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+
+            context.lineWidth = 2;
+            context.lineCap = "round";
+            context.strokeStyle = "black";
+
+            context.lineTo(e.offsetX, e.offsetY);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(e.offsetX, e.offsetY);
+
+            clearTimeout(sendTimer);
+            sendTimer = setTimeout(function(){
+                sendDrawingData(canvas.toDataURL());
+            },100);
+        }
+
+        function sendDrawingData(drawingData) {
+            if (connection) {
+                connection.invoke("SendDrawing", lobbyName, drawingData).catch(err => console.error(err.toString()));
+            }
+        }
+
+        function drawReceivedData(drawingData) {
+            const image = new Image();
+            image.onload = () => {
+                context.drawImage(image, 0, 0);
+            };
+            image.src = drawingData;
+        }
 
         function leaveLobby() {
             if (connection) {
@@ -65,6 +152,11 @@
             if(connection){
                 connection.invoke("LeaveLobby", lobbyName, username).catch(err => console.error(err.toString()));
             }
+        });
+
+        connection.onclose(async () => {
+            console.log("Connection closed, trying to reconnect...");
+            await startConnection();
         });
     </script>
 </body>
