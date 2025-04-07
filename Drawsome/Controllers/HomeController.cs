@@ -21,7 +21,7 @@ public class HomeController(ApplicationDbContext context) : Controller
     [HttpPost]
     public IActionResult Register(string username, string password)
     {
-        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
         var newUser = new User
         {
@@ -94,7 +94,7 @@ public class HomeController(ApplicationDbContext context) : Controller
         var username = HttpContext.Session.GetString("Username");
         var user = context.Users.FirstOrDefault(u => u.Username == username);
 
-        if (user == null || !user.IsAdmin)
+        if (user is not { IsAdmin: true })
         {
             return RedirectToAction("LobbySelection");
         }
@@ -113,7 +113,7 @@ public class HomeController(ApplicationDbContext context) : Controller
         var username = HttpContext.Session.GetString("Username");
         var user = context.Users.FirstOrDefault(u => u.Username == username);
 
-        if (user == null || !user.IsAdmin)
+        if (user is not { IsAdmin: true })
         {
             return RedirectToAction("LobbySelection");
         }
@@ -132,23 +132,21 @@ public class HomeController(ApplicationDbContext context) : Controller
 
         var adminUser = context.Users.FirstOrDefault(u => u.Username == HttpContext.Session.GetString("Username"));
 
-        if (adminUser == null || !adminUser.IsAdmin)
+        if (adminUser is not { IsAdmin: true })
         {
             return RedirectToAction("LobbySelection");
         }
 
         var userToUpdate = context.Users.FirstOrDefault(u => u.Id == id);
-        if (userToUpdate != null)
+        if (userToUpdate == null) return RedirectToAction("ManageUsers");
+        userToUpdate.Username = username;
+        if (!string.IsNullOrEmpty(password))
         {
-            userToUpdate.Username = username;
-            if (!string.IsNullOrEmpty(password))
-            {
-                userToUpdate.Password = BCrypt.Net.BCrypt.HashPassword(password);
-            }
-            userToUpdate.Score = score;
-            userToUpdate.IsAdmin = isAdmin;
-            context.SaveChanges();
+            userToUpdate.Password = BCrypt.Net.BCrypt.HashPassword(password);
         }
+        userToUpdate.Score = score;
+        userToUpdate.IsAdmin = isAdmin;
+        context.SaveChanges();
 
         return RedirectToAction("ManageUsers");
     }
@@ -162,17 +160,15 @@ public class HomeController(ApplicationDbContext context) : Controller
 
         var adminUser = context.Users.FirstOrDefault(u => u.Username == HttpContext.Session.GetString("Username"));
 
-        if (adminUser == null || !adminUser.IsAdmin)
+        if (adminUser is not { IsAdmin: true })
         {
             return RedirectToAction("LobbySelection");
         }
 
         var userToDelete = context.Users.FirstOrDefault(u => u.Id == id);
-        if (userToDelete != null)
-        {
-            context.Users.Remove(userToDelete);
-            context.SaveChanges();
-        }
+        if (userToDelete == null) return RedirectToAction("ManageUsers");
+        context.Users.Remove(userToDelete);
+        context.SaveChanges();
 
         return RedirectToAction("ManageUsers");
     }

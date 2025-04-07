@@ -175,7 +175,7 @@ public class HomeControllerTests
                 val = "testuser"u8.ToArray();
             });
 
-        LobbyHub.Lobbies = new ConcurrentDictionary<string, Lobby>();
+        LobbyHub.Lobbies = new ConcurrentDictionary<string, Lobby?>();
 
         // Act
         Debug.Assert(_controller != null, nameof(_controller) + " != null");
@@ -196,7 +196,7 @@ public class HomeControllerTests
                 val = "testuser"u8.ToArray();
             });
 
-        LobbyHub.Lobbies = new ConcurrentDictionary<string, Lobby>();
+        LobbyHub.Lobbies = new ConcurrentDictionary<string, Lobby?>();
         LobbyHub.Lobbies.TryAdd("TestLobby", new Lobby() { Players = [] });
 
         // Act
