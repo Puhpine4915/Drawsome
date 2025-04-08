@@ -29,7 +29,7 @@ namespace Drawsome.Hubs
 
         public async Task<bool> JoinLobby(string lobbyName, string username)
         {
-            if (Lobbies.TryGetValue(lobbyName, out Lobby? lobby))
+            if (Lobbies.TryGetValue(lobbyName, out var lobby))
             {
                 if (lobby != null && lobby.Players.All(p => p != username))
                 {
@@ -48,7 +48,7 @@ namespace Drawsome.Hubs
 
         public async Task LeaveLobby(string lobbyName, string username)
         {
-            if (Lobbies.TryGetValue(lobbyName, out Lobby? lobby))
+            if (Lobbies.TryGetValue(lobbyName, out var lobby))
             {
                 if (lobby != null && lobby.Players.Contains(username))
                 {
