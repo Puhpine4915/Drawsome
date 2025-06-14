@@ -2,7 +2,7 @@
     Layout = null;
     var username = Context.Session.GetString("Username");
     var lobby = Drawsome.Hubs.LobbyHub.Lobbies.FirstOrDefault(l => l.Key == ViewBag.LobbyName).Value;
-    var isCreator = lobby?.Players.FirstOrDefault() == username; // Check if the current user is the first player (creator)
+    var isCreator = lobby?.Players.FirstOrDefault() == username;
 }
 
 <!DOCTYPE html>
@@ -19,18 +19,8 @@
         <ul id="playerList"></ul>
         <button onclick="leaveLobby()">Leave Lobby</button>
     </div>
-    <div>
-        @if (isCreator)
-        {
-            <br>
-            <canvas id="drawingCanvas" width="400" height="300" style="border: 1px solid black;"></canvas>
-        }
-        else
-        {
-            <br>
-            <canvas id="viewCanvas" width="400" height="300" style="border: 1px solid black;"></canvas>
-        }
-    </div>
+
+    <div id="shadowHostContainer"></div>
 
     <script>
         let connection;
@@ -78,10 +68,26 @@
             }
         }
 
-        startConnection();
+        function setupShadowDOM(canvasId) {
+            const host = document.getElementById("shadowHostContainer");
+            const shadowRoot = host.attachShadow({ mode: "open" });
+
+            shadowRoot.innerHTML = `
+                <style>
+                    canvas {
+                        border: 1px solid black;
+                        display: block;
+                        margin-top: 10px;
+                    }
+                </style>
+                <canvas id="${canvasId}" width="400" height="300"></canvas>
+            `;
+
+            return shadowRoot.getElementById(canvasId);
+        }
 
         function setupCreatorCanvas() {
-            canvas = document.getElementById("drawingCanvas");
+            canvas = setupShadowDOM("drawingCanvas");
             context = canvas.getContext("2d");
 
             canvas.addEventListener("mousedown", startDrawing);
@@ -90,7 +96,7 @@
         }
 
         function setupViewCanvas() {
-            canvas = document.getElementById("viewCanvas");
+            canvas = setupShadowDOM("viewCanvas");
             context = canvas.getContext("2d");
         }
 
@@ -154,10 +160,12 @@
             }
         });
 
-        connection.onclose(async () => {
+        connection?.onclose(async () => {
             console.log("Connection closed, trying to reconnect...");
             await startConnection();
         });
+
+        startConnection();
     </script>
 </body>
 </html>
