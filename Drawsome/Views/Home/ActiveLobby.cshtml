@@ -20,9 +20,41 @@
         <button onclick="leaveLobby()">Leave Lobby</button>
     </div>
 
-    <div id="shadowHostContainer"></div>
+    <maarten-canvas></maarten-canvas>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            class Maarten extends HTMLElement {
+                constructor() {
+                    super();
+                    this.attachShadow({ mode: "open" });
+
+                    this.shadowRoot.innerHTML = `
+                        <style>
+                            canvas {
+                                border: 1px solid black;
+                                display: block;
+                                margin-top: 10px;
+                                background-color: #fbfaf5;
+                            }
+                        </style>
+                        <canvas width="400" height="300"></canvas>
+                    `;
+                }
+
+                get canvas() {
+                    return this.shadowRoot.querySelector('canvas');
+                }
+
+                get context() {
+                    return this.canvas.getContext('2d');
+                }
+            }
+
+            customElements.define('maarten-canvas', Maarten);
+		    console.log('Custom element registered:', customElements.get('maarten-canvas'));
+        });
+
         let connection;
         const lobbyName = "@ViewBag.LobbyName";
         const username = "@Context.Session.GetString("Username")";
@@ -69,22 +101,8 @@
         }
 
         function setupShadowDOM(canvasId) {
-            const host = document.getElementById("shadowHostContainer");
-            const shadowRoot = host.attachShadow({ mode: "open" });
-
-            shadowRoot.innerHTML = `
-                <style>
-                    canvas {
-                        border: 1px solid black;
-                        display: block;
-                        margin-top: 10px;
-                        background-color: #fbfaf5;
-                    }
-                </style>
-                <canvas id="${canvasId}" width="400" height="300"></canvas>
-            `;
-
-            return shadowRoot.getElementById(canvasId);
+            const maarten = document.querySelector('maarten-canvas');
+            return maarten.canvas;
         }
 
         function setupCreatorCanvas() {
