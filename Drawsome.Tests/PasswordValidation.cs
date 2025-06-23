@@ -13,6 +13,7 @@ public class PasswordValidationTests
     public void Setup()
     {
         var options = new ChromeOptions();
+        // arguments because it didnt work without them
         options.AddArgument("--no-sandbox");
         options.AddArgument("--headless");
         options.AddArgument("--disable-dev-shm-usage");
