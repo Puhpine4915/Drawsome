@@ -6,10 +6,11 @@ namespace Drawsome.Models
     {
         public int Id { get; set; }
         
-        [Required, StringLength(50)]
+        [Required]
         public string Username { get; set; }
         
-        [Required, StringLength(100)]
+        [Required]
+        [StringLength(128, MinimumLength = 12, ErrorMessage = "Password must be between 12 and 128 characters long")]
         public string Password { get; set; }
         public int Score { get; set; }
         public bool IsAdmin { get; set; }

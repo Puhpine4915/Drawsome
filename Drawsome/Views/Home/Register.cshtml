@@ -12,9 +12,14 @@
 <img src="~/images/DrawsomeLogo.png" alt="Drawsome Logo" class="centered-logo" />
 <div class="login-container">
     <h2>Register</h2>
-    <form method="post" asp-action="Register">
+    <form method="post" asp-action="Register" onsubmit="return validateForm()">
         <input type="text" name="username" placeholder="Username" required />
-        <input type="password" name="password" placeholder="Password" required />
+        <input type="password" name="password" id="password" placeholder="Password" 
+               required minlength="12" maxlength="128" 
+               oninput="validatePassword(this)" />
+        <div id="passwordError" style="color: red; display: none;">
+            Password must be between 12 and 128 characters long
+        </div>
         <button type="submit">Register</button>
     </form>
     @if (!ViewData.ModelState.IsValid)
@@ -27,5 +32,25 @@
         Already have an account? <a href="/">Login</a>
     </p>
 </div>
+
+<script>
+function validatePassword(input) {
+    const errorDiv = document.getElementById('passwordError');
+    const password = input.value;
+    
+    if (password.length < 12 || password.length > 128) {
+        errorDiv.style.display = 'block';
+        return false;
+    }
+    
+    errorDiv.style.display = 'none';
+    return true;
+}
+
+function validateForm() {
+    const password = document.getElementById('password');
+    return validatePassword(password);
+}
+</script>
 </body>
 </html>

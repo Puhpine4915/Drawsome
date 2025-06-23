@@ -10,7 +10,7 @@
 </head>
 <body>
 <h1>Edit User: @Model.Username</h1>
-<form method="post" action="@Url.Action("UpdateUser", "Home")">
+<form method="post" action="@Url.Action("UpdateUser", "Home")" id="editUserForm">
     <input type="hidden" name="id" value="@Model.Id" />
     <div>
         <label for="username">Username:</label>
@@ -18,7 +18,13 @@
     </div>
     <div>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" />
+        <input type="password" id="password" name="password"
+               minlength="12" maxlength="128"
+               oninvalid="this.setCustomValidity('Password must be between 12 and 128 characters')"
+               oninput="this.setCustomValidity('')" />
+        <div style="color: #666; font-size: 0.8em; margin: 5px 0;">
+            Password must be between 12 and 128 characters long
+        </div>
     </div>
     <div>
         <label for="score">Score:</label>
@@ -33,5 +39,15 @@
     <br>
     <button class="styledButton" onclick="location.href='@Url.Action("ManageUsers", "Home")'">Back</button>
 </form>
+
+<script>
+document.getElementById('editUserForm').addEventListener('submit', function(e) {
+    const password = this.querySelector('input[name="password"]').value;
+    if (password && (password.length < 12 || password.length > 128)) {
+        e.preventDefault();
+        alert('Password must be between 12 and 128 characters long');
+    }
+});
+</script>
 </body>
 </html>
