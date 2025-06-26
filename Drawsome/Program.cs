@@ -7,9 +7,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
+
 builder.Services.AddSignalR();
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -47,8 +59,8 @@ app.Use(async (context, next) =>
         "script-src 'self'; " +
         "style-src 'self'; " +
         "img-src 'self' data:; " +
-        "connect-src 'self';" +
-        "frame-ancestors 'self';" +
+        "connect-src 'self'; " +
+        "frame-ancestors 'self'; " +
         "form-action 'self'; " +
         "base-uri 'self';");
     await next();
