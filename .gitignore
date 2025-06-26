@@ -65,3 +65,6 @@ project.lock.json
 # Ignore Thumbs.db and other OS-generated files
 Thumbs.db
 .DS_Store
+
+
+/Drawsome/Drawsome.sqlite
