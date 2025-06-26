@@ -44,10 +44,13 @@ app.Use(async (context, next) =>
     context.Response.Headers.Append("Referrer-Policy", "strict-origin-always");
     context.Response.Headers.Append("Content-Security-Policy", 
         "default-src 'self'; " + 
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
-        "style-src 'self' 'unsafe-inline'; " +
+        "script-src 'self' " +
+        "style-src 'self' " +
         "img-src 'self' data:; " +
-        "connect-src 'self';");
+        "connect-src 'self';" +
+        "frame-ancestors 'self';" +
+        "form-action 'self'; " +
+        "base-uri 'self';");
     await next();
 });
 
